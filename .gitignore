@@ -71,3 +71,6 @@ DEPLOYMENT_REPORT.md
 # Node modules (Functions)
 functions/node_modules/
 functions/package-lock.json
+
+# Service Account Keys
+serviceAccountKey.json
