@@ -1,4 +1,4 @@
-# 🌙 Crescent Gate
+# Crescent Gate
 
 A premium, modern Society Management System built with **Flutter** & **Firebase**.
 
