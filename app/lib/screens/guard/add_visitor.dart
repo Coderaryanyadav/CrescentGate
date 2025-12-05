@@ -189,23 +189,26 @@ class _AddVisitorScreenState extends ConsumerState<AddVisitorScreen> {
               ),
 
               const SizedBox(height: 24),
-              const Text('Purpose', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
               
-              Wrap(
-                spacing: 8,
-                children: _purposes.map((p) {
-                  final isSelected = _selectedPurpose == p;
-                  return ChoiceChip(
-                    label: Text(p),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      if (selected) setState(() => _selectedPurpose = p);
-                    },
-                    selectedColor: Theme.of(context).primaryColor,
-                    labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
-                  );
-                }).toList(),
+              // Purpose Dropdown with Emojis
+              DropdownButtonFormField<String>(
+                value: _selectedPurpose,
+                decoration: const InputDecoration(
+                  labelText: 'Purpose of Visit',
+                  prefixIcon: Icon(Icons.assignment),
+                  border: OutlineInputBorder(),
+                ),
+               items: const [
+                  DropdownMenuItem(value: 'Delivery', child: Text('🚚 Delivery')),
+                  DropdownMenuItem(value: 'Guest', child: Text('👥 Guest')),
+                  DropdownMenuItem(value: 'Cab', child: Text('🚕 Cab')),
+                  DropdownMenuItem(value: 'Service', child: Text('🔧 Service')),
+                  DropdownMenuItem(value: 'Other', child: Text('📦 Other')),
+                ],
+                onChanged: (val) {
+                  if (val != null) setState(() => _selectedPurpose = val);
+                },
+                validator: (v) => v == null ? 'Select purpose' : null,
               ),
 
               const SizedBox(height: 32),

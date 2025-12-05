@@ -106,58 +106,68 @@ class AdminDashboard extends ConsumerWidget {
             ),
           ),
 
-          // 4. Status Grid Title
-          const SliverToBoxAdapter(
+          // 4. Status Grid - REAL DATA FROM FIRESTORE
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-              child: Text('Building Statistics', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey)),
-            ),
-          ),
+              padding: const EdgeInsets.all(16.0),
+              child: FutureBuilder<Map<String, dynamic>>(
+                future: ref.read(firestoreServiceProvider).getUserStats(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-          // 4. Statistics Grid
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: FutureBuilder<Map<String, int>>(
-              future: ref.watch(firestoreServiceProvider).getUserStats(),
-              builder: (context, snapshot) {
-                final stats = snapshot.data ?? {'residents': 0, 'guards': 0, 'total': 0};
-                
-                return SliverGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 1.5,
-                  children: [
-                    _StatCard(
-                      title: 'Total Residents',
-                      value: stats['residents'].toString(),
-                      icon: Icons.home,
-                      color: Colors.blue,
-                    ),
-                    _StatCard(
-                      title: 'Active Guards',
-                      value: stats['guards'].toString(),
-                      icon: Icons.security,
-                      color: Colors.green,
-                    ),
-                    const _StatCard(
-                      title: 'Total Users',
-                      value: '96', // Use stats['total'] if available or hardcode max capacity concept
-                      icon: Icons.people_alt,
-                      color: Colors.orange,
-                    ),
-                    const _StatCard(
-                      title: 'Building Wings',
-                      value: '2 (A & B)',
-                      icon: Icons.apartment,
-                      color: Colors.purple,
-                    ),
-                  ],
-                );
-              },
+                  final stats = snapshot.data!;
+                  final residents = stats['residents'] ?? 0;
+                  final guards = stats['guards'] ?? 0;
+                  final total = stats['total'] ?? 0;
+                  
+                  // Get unique wings from residents
+                  return FutureBuilder<List<dynamic>>(
+                    future: ref.read(firestoreServiceProvider).getUniqueWings(),
+                    builder: (context, wingsSnapshot) {
+                      final wings = wingsSnapshot.data ?? [];
+                      final wingsText = wings.isEmpty ? 'N/A' : wings.join(', ');
+
+                      return GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        children: [
+                          _StatCard(
+                            title: '🏠 Total Residents',
+                            value: '$residents',
+                            icon: Icons.home,
+                            color: Colors.indigo,
+                          ),
+                          _StatCard(
+                            title: '🛡️ Active Guards',
+                            value: '$guards',
+                            icon: Icons.security,
+                            color: Colors.green,
+                          ),
+                          _StatCard(
+                            title: '👥 Total Users',
+                            value: '$total',
+                            icon: Icons.people,
+                            color: Colors.orange,
+                          ),
+                          _StatCard(
+                            title: '🏢 Building Wings',
+                            value: wingsText,
+                            icon: Icons.apartment,
+                            color: Colors.purple,
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
-          
           // 5. Spacer
           const SliverFillRemaining(hasScrollBody: false),
         ],
@@ -176,9 +186,11 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       decoration: BoxDecoration(
-        color: whiteOrDark(context),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
@@ -193,10 +205,24 @@ class _StatCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Icon(icon, color: color, size: 28),
-              Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
             ],
           ),
-          Text(title, style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w600)),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white70 : Colors.grey[700],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

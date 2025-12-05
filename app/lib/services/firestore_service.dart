@@ -237,6 +237,25 @@ class FirestoreService {
     }
   }
 
+  Future<List<String>> getUniqueWings() async {
+    try {
+      final snapshot = await _usersRef.where('role', isEqualTo: 'resident').get();
+      final wings = <String>{};
+      
+      for (var doc in snapshot.docs) {
+        final wing = doc.data()['wing'] as String?;
+        if (wing != null && wing.isNotEmpty) {
+          wings.add(wing);
+        }
+      }
+      
+      final sorted = wings.toList()..sort();
+      return sorted;
+    } catch (e) {
+      return [];
+    }
+  }
+
   // ===========================================================================
   // 🔔 NOTIFICATIONS
   // ===========================================================================
@@ -263,6 +282,10 @@ class FirestoreService {
 
   Future<void> addNotice(Notice notice) async {
     await _firestore.collection('notices').add(notice.toMap());
+  }
+
+  Future<void> deleteNotice(String noticeId) async {
+    await _firestore.collection('notices').doc(noticeId).delete();
   }
 
   // ===========================================================================
