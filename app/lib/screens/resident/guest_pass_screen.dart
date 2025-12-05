@@ -48,71 +48,80 @@ class _GuestPassScreenState extends ConsumerState<GuestPassScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (_currentPass != null) ...[
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardTheme.color,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                   Container(
-                     padding: const EdgeInsets.all(12),
-                     decoration: BoxDecoration(
-                       color: Colors.white,
-                       borderRadius: BorderRadius.circular(8),
-                     ),
-                     child: QrImageView(
-                      data: _currentPass!.token,
-                      version: QrVersions.auto,
-                      size: 250,
+    return Scaffold(
+      backgroundColor: Colors.black, // Dark background
+      appBar: AppBar(title: const Text('Gate Pass')),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_currentPass != null) ...[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5), // Darker shadow
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
                     ),
-                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Entry Pass',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Valid until: ${_currentPass!.validUntil.hour}:${_currentPass!.validUntil.minute}',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ],
+                  ],
+                ),
+                child: Column(
+                  children: [
+                     Container(
+                       padding: const EdgeInsets.all(12),
+                       decoration: BoxDecoration(
+                         color: Colors.white, // QR needs white
+                         borderRadius: BorderRadius.circular(8),
+                       ),
+                       child: QrImageView(
+                        data: _currentPass!.token,
+                        version: QrVersions.auto,
+                        size: 250,
+                      ),
+                     ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Entry Pass',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    Text(
+                      'Valid until: ${_currentPass!.validUntil.hour}:${_currentPass!.validUntil.minute.toString().padLeft(2, '0')}',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+            ] else ...[
+               const Icon(Icons.qr_code_2, size: 100, color: Colors.blue),
+               const SizedBox(height: 24),
+               const Text(
+                 'Generate a digital pass for your guests',
+                 textAlign: TextAlign.center,
+                 style: TextStyle(fontSize: 18, color: Colors.white54, decoration: TextDecoration.none),
+               ),
+            ],
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton.icon(
+                onPressed: _isLoading ? null : _generatePass,
+                icon: const Icon(Icons.add),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.indigo,
+                  foregroundColor: Colors.white,
+                ),
+                label: Text(_isLoading ? 'Generating...' : 'GENERATE NEW PASS'),
               ),
             ),
-            const SizedBox(height: 32),
-          ] else ...[
-             const Icon(Icons.qr_code_2, size: 100, color: Colors.blue),
-             const SizedBox(height: 24),
-             const Text(
-               'Generate a digital pass for your guests',
-               textAlign: TextAlign.center,
-               style: TextStyle(fontSize: 18, color: Colors.grey),
-             ),
           ],
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton.icon(
-              onPressed: _isLoading ? null : _generatePass,
-              icon: const Icon(Icons.add),
-              label: Text(_isLoading ? 'Generating...' : 'GENERATE NEW PASS'),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

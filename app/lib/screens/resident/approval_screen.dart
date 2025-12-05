@@ -15,14 +15,17 @@ class ApprovalScreen extends ConsumerWidget {
 
     final requestsStream = ref.watch(firestoreServiceProvider).getPendingRequestsForResident(user.uid);
 
-    return StreamBuilder<List<VisitorRequest>>(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(title: const Text('Approvals')),
+      body: StreamBuilder<List<VisitorRequest>>(
       stream: requestsStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
         }
         final requests = snapshot.data ?? [];
         if (requests.isEmpty) {
@@ -32,13 +35,17 @@ class ApprovalScreen extends ConsumerWidget {
               children: [
                 Icon(Icons.check_circle_outlined, size: 64, color: Colors.grey),
                 SizedBox(height: 16),
-                Text('No pending approvals'),
+                Text(
+                  'No pending approvals', 
+                  style: TextStyle(fontSize: 18, color: Colors.grey, decoration: TextDecoration.none)
+                ),
               ],
             ),
           );
         }
 
         return ListView.builder(
+          padding: const EdgeInsets.all(16),
           itemCount: requests.length,
           itemBuilder: (context, index) {
             final request = requests[index];
@@ -51,7 +58,7 @@ class ApprovalScreen extends ConsumerWidget {
           },
         );
       },
-    );
+    ));
   }
 
   Future<void> _handleApproval(

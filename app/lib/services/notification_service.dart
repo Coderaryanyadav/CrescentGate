@@ -184,10 +184,11 @@ class _VisitorApprovalDialogState extends State<_VisitorApprovalDialog> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF1E1E1E), // Dark Background
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white10),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10)),
+            BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20, offset: const Offset(0, 10)),
           ],
         ),
         child: Column(
@@ -198,11 +199,11 @@ class _VisitorApprovalDialogState extends State<_VisitorApprovalDialog> {
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.indigo.shade100, width: 2),
+                border: Border.all(color: Colors.indigo.shade200, width: 2),
               ),
               child: CircleAvatar(
                 radius: 50,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: Colors.grey[800],
                 backgroundImage: (imageWidget as Image).image,
               ),
             ),
@@ -211,19 +212,20 @@ class _VisitorApprovalDialogState extends State<_VisitorApprovalDialog> {
             // 📝 Name & Purpose
             Text(
               widget.request.visitorName,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.white10,
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.orange.withOpacity(0.5)),
               ),
               child: Text(
                 widget.request.purpose.toUpperCase(),
-                style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 12),
+                style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),
             const SizedBox(height: 24),
@@ -239,8 +241,8 @@ class _VisitorApprovalDialogState extends State<_VisitorApprovalDialog> {
                       onPressed: () => _handleAction('rejected'),
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        side: BorderSide(color: Colors.red.shade200),
-                        foregroundColor: Colors.red,
+                        side: BorderSide(color: Colors.red.shade400),
+                        foregroundColor: Colors.redAccent,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       child: const Text('DENY'),
@@ -252,7 +254,7 @@ class _VisitorApprovalDialogState extends State<_VisitorApprovalDialog> {
                       onPressed: () => _handleAction('approved'),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: Colors.indigo,
+                        backgroundColor: Colors.green, // Green for Approve
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         elevation: 4,

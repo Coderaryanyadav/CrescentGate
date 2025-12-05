@@ -300,6 +300,7 @@ class FirestoreService {
   Stream<List<Complaint>> getAllComplaints() {
     return _firestore.collection('complaints')
         .orderBy('createdAt', descending: true)
+```
         .snapshots()
         .map((s) => s.docs.map((d) => Complaint.fromMap(d.data(), d.id)).toList());
   }
@@ -307,7 +308,7 @@ class FirestoreService {
   Stream<List<Complaint>> getUserComplaints(String userId) {
     return _firestore.collection('complaints')
         .where('residentId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
+        // .orderBy('createdAt', descending: true) // ⚠️ Removed to avoid Index requirement for now
         .snapshots()
         .map((s) => s.docs.map((d) => Complaint.fromMap(d.data(), d.id)).toList());
   }

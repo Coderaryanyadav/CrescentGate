@@ -15,27 +15,34 @@ class VisitorHistoryScreen extends ConsumerWidget {
 
     final historyStream = ref.watch(firestoreServiceProvider).getVisitorHistoryForResident(user.uid);
 
-    return StreamBuilder<List<VisitorRequest>>(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(title: const Text('Visitor History')),
+      body: StreamBuilder<List<VisitorRequest>>(
       stream: historyStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
         }
         final history = snapshot.data ?? [];
         if (history.isEmpty) {
-          return const Center(child: Text('No visitor history'));
+          return const Center(child: Text('No visitor history', style: TextStyle(color: Colors.white54)));
         }
 
         return ListView.builder(
+          padding: const EdgeInsets.all(16),
           itemCount: history.length,
           itemBuilder: (context, index) {
-            return VisitorCard(request: history[index]);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: VisitorCard(request: history[index]),
+            );
           },
         );
       },
-    );
+    ));
   }
 }
