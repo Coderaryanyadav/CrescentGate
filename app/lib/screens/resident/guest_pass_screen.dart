@@ -155,7 +155,7 @@ class _GuestPassScreenState extends ConsumerState<GuestPassScreen> {
                    color: Colors.blueAccent.withOpacity(0.1),
                    border: Border.all(color: Colors.blueAccent.withOpacity(0.3), width: 2),
                  ),
-                 child: Icon(Icons.qr_code_Scanner, size: 80, color: Colors.blueAccent.shade100)
+                 child: Icon(Icons.qr_code_scanner, size: 80, color: Colors.blueAccent.shade100)
                ),
                const SizedBox(height: 32),
                const Text(

@@ -75,7 +75,9 @@ class VisitorCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: accentColor.withOpacity(0.1),
-                  blurRadius: 50,
+                  boxShadow: [
+                    BoxShadow(color: accentColor.withOpacity(0.2), blurRadius: 50),
+                  ],
                 ),
               ),
             ),
