@@ -51,73 +51,155 @@ class _GuestPassScreenState extends ConsumerState<GuestPassScreen> {
     return Scaffold(
       backgroundColor: Colors.black, // Dark background
       appBar: AppBar(title: const Text('Gate Pass')),
-      body: Padding(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Color(0xFF101015)],
+          ),
+        ),
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (_currentPass != null) ...[
+              // ✨ HOLOGRAPHIC PASS CARD
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
-                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [const Color(0xFF202025), Colors.black],
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.5), // Darker shadow
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
+                      color: Colors.blueAccent.withOpacity(0.2),
+                      blurRadius: 30,
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
                 child: Column(
                   children: [
+                     // QR Container with Glow
                      Container(
-                       padding: const EdgeInsets.all(12),
+                       padding: const EdgeInsets.all(16),
                        decoration: BoxDecoration(
-                         color: Colors.white, // QR needs white
-                         borderRadius: BorderRadius.circular(8),
+                         color: Colors.white,
+                         borderRadius: BorderRadius.circular(16),
+                         boxShadow: [
+                           BoxShadow(color: Colors.blue.shade900.withOpacity(0.2), blurRadius: 20),
+                         ],
                        ),
                        child: QrImageView(
                         data: _currentPass!.token,
                         version: QrVersions.auto,
                         size: 250,
+                        eyeStyle: const QrEyeStyle(eyeShape: QrEyeShape.square, color: Colors.black),
+                        dataModuleStyle: const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: Colors.black87),
                       ),
                      ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     const Text(
-                      'Entry Pass',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                      'DIGITAL ENTRY PASS',
+                      style: TextStyle(
+                        fontSize: 14, 
+                        fontWeight: FontWeight.bold, 
+                        color: Colors.blueAccent, 
+                        letterSpacing: 4
+                      ),
                     ),
-                    Text(
-                      'Valid until: ${_currentPass!.validUntil.hour}:${_currentPass!.validUntil.minute.toString().padLeft(2, '0')}',
-                      style: const TextStyle(color: Colors.white70),
+                    const SizedBox(height: 8),
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Colors.white, Colors.white70],
+                      ).createShader(bounds),
+                      child: const Text(
+                        'Access Granted',
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.timer, size: 14, color: Colors.orangeAccent),
+                          const SizedBox(width: 8),
+                          Text(
+                            'EXPIRES AT ${_currentPass!.validUntil.hour}:${_currentPass!.validUntil.minute.toString().padLeft(2, '0')}',
+                            style: const TextStyle(color: Colors.orangeAccent, letterSpacing: 1, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 32),
             ] else ...[
-               const Icon(Icons.qr_code_2, size: 100, color: Colors.blue),
-               const SizedBox(height: 24),
+               // Empty State
+               Container(
+                 padding: const EdgeInsets.all(32),
+                 decoration: BoxDecoration(
+                   shape: BoxShape.circle,
+                   color: Colors.blueAccent.withOpacity(0.1),
+                   border: Border.all(color: Colors.blueAccent.withOpacity(0.3), width: 2),
+                 ),
+                 child: Icon(Icons.qr_code_Scanner, size: 80, color: Colors.blueAccent.shade100)
+               ),
+               const SizedBox(height: 32),
                const Text(
-                 'Generate a digital pass for your guests',
+                 'Generate Guest Pass',
+                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 1),
+               ),
+               const SizedBox(height: 12),
+               const Text(
+                 'Create a temporary digital access code\nfor your expected guests.',
                  textAlign: TextAlign.center,
-                 style: TextStyle(fontSize: 18, color: Colors.white54, decoration: TextDecoration.none),
+                 style: TextStyle(fontSize: 16, color: Colors.grey, height: 1.5),
                ),
             ],
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
+            
+            // 🚀 Generator Button
             SizedBox(
               width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed: _isLoading ? null : _generatePass,
-                icon: const Icon(Icons.add),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
-                  foregroundColor: Colors.white,
+              height: 56,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(color: Colors.blueAccent.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 5))
+                  ],
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2979FF), Color(0xFF1565C0)],
+                  ),
                 ),
-                label: Text(_isLoading ? 'Generating...' : 'GENERATE NEW PASS'),
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _generatePass,
+                  icon: _isLoading 
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
+                    : const Icon(Icons.auto_awesome, color: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  label: Text(
+                    _isLoading ? 'GENERATING SECURE TOKEN...' : 'GENERATE DIGITAL PASS',
+                    style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.5, fontSize: 14, color: Colors.white),
+                  ),
+                ),
               ),
             ),
           ],
