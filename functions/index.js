@@ -132,6 +132,45 @@ exports.sendSOSNotification = functions.firestore
     });
 
 // ============================================
+// ✅ FUNCTION 4: Notify Guard/Admin on Approval
+// ============================================
+// Triggers when resident approves/rejects visitor
+// Notifies Guardians
+//
+exports.sendVisitorApprovalNotification = functions.firestore
+    .document("visitorRequests/{requestId}")
+    .onUpdate(async (change, context) => {
+        const newData = change.after.data();
+        const oldData = change.before.data();
+
+        // Only trigger if status changed to 'approved' or 'rejected'
+        if (oldData.status === newData.status) return null;
+        if (newData.status !== 'approved' && newData.status !== 'rejected') return null;
+
+        const status = newData.status.toUpperCase();
+        const emoji = status === 'APPROVED' ? '✅' : '🚫';
+
+        const payload = {
+            topic: "guards", // Notify all guards
+            notification: {
+                title: `Visitor ${status} ${emoji}`,
+                body: `${newData.visitorName} for ${newData.wing}-${newData.flatNumber} has been ${status}.`,
+            },
+            android: {
+                priority: "high",
+                notification: {
+                    channelId: "high_importance_channel",
+                    priority: "high",
+                },
+            },
+        };
+
+        return admin.messaging().send(payload);
+    });
+
+// ============================================
+
+// ============================================
 // �📝 HOW IT WORKS (When Deployed)
 // ============================================
 //

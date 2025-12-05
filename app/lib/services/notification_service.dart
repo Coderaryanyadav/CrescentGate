@@ -20,10 +20,18 @@ class NotificationService {
 
   NotificationService(this.ref);
 
-  Future<void> initialize(String uid) async {
+  Future<void> initialize(String uid, String role) async {
     // Request permission
     await _fcm.requestPermission(alert: true, badge: true, sound: true);
-    await _fcm.subscribeToTopic('residents'); // Subscribe to Announcements
+    
+    // Topic Subscriptions based on Role
+    if (role == 'guard' || role == 'admin') {
+      await _fcm.subscribeToTopic('security_alerts');
+      await _fcm.subscribeToTopic('guards');
+      if (role == 'admin') await _fcm.subscribeToTopic('admin_updates');
+    } else {
+      await _fcm.subscribeToTopic('residents');
+    }
 
     // Get token
     String? token = await _fcm.getToken();

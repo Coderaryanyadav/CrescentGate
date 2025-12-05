@@ -40,6 +40,11 @@ class AuthWrapper extends ConsumerWidget {
               return const LoginScreen();
             }
 
+            // Initialize Notifications with Role
+            Future.microtask(() {
+              ref.read(notificationServiceProvider).initialize(user.uid, appUser.role);
+            });
+
             switch (appUser.role) {
               case 'guard':
                 return const GuardHome();
