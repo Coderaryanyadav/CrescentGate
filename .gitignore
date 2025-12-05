@@ -74,3 +74,11 @@ functions/package-lock.json
 
 # Service Account Keys
 serviceAccountKey.json
+
+# Firebase Secrets
+app/android/app/google-services.json
+app/ios/Runner/GoogleService-Info.plist
+app/lib/firebase_options.dart
+functions/serviceAccountKey.json
+.csv
+
